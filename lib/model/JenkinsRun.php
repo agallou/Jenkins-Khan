@@ -300,7 +300,7 @@ class JenkinsRun extends BaseJenkinsRun
     }
 
     $runParameters = $this->decodeParameters();
-    
+
     if (is_array($runParameters))
     {
       foreach ($runParameters as $key => $value)
@@ -335,6 +335,19 @@ class JenkinsRun extends BaseJenkinsRun
         Jenkins_Job::BRANCH_PARAMETER_NAME => $this->getGitBranch()
       )
     ));
+  }
+
+  /**
+   * hasRequiredParameters
+   *
+   * @param Jenkins $jenkins
+   *
+   * @return boolean
+   */
+  public function hasRequiredParameters(Jenkins $jenkins)
+  {
+    $parameters = $jenkins->getJob($this->getJobName())->getParametersDefinition();
+    return array_key_exists(Jenkins_Job::BRANCH_PARAMETER_NAME, $parameters);
   }
 
   /**
@@ -409,15 +422,15 @@ class JenkinsRun extends BaseJenkinsRun
   public function getGitBranch()
   {
     //why not using the dedicated methods ?
-    
-    //if JenkinsRun::getJenkinsGroupRun is used 
-    //it will probably load the JenkinsGroupRun 
+
+    //if JenkinsRun::getJenkinsGroupRun is used
+    //it will probably load the JenkinsGroupRun
     //and store the JenkinsRun has the only in the JenkinsGroupRun
-    
-    //and later, when the GroupRun is used, 
-    //the collection of run is initiliazed but uncomplete 
+
+    //and later, when the GroupRun is used,
+    //the collection of run is initiliazed but uncomplete
     //and it'll display a GroupRun with this only only Ru
-    
+
     return JenkinsGroupRunPeer::retrieveByPK($this->getJenkinsGroupRunId())->getGitBranch();
   }
 
